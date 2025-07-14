@@ -1,0 +1,67 @@
+﻿@model IEnumerable<VehicleLease.Models.Domain.Driver>
+
+@{
+    ViewBag.Title = "Driver Management";
+}
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-id-card"></i> Driver Management</h1>
+            <a href="@Url.Action("Create")" class="btn btn-premium">
+                <i class="fas fa-plus-circle"></i> New Driver
+            </a>
+        </div>
+        <div class="search-filter">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search drivers...">
+            </div>
+        </div>
+    </div>
+
+    <div class="card-view">
+        <div class="card-header">
+            <h3><i class="fas fa-users"></i> Driver Roster</h3>
+            <span class="badge bg-primary">@Model.Count() Drivers</span>
+        </div>
+
+        <div class="table-card">
+            <table class="elegant-table">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.FullName)</th>
+                        <th>@Html.DisplayNameFor(model => model.LicenseNumber)</th>
+                        <th class="actions-header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover-animate">
+                            <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.LicenseNumber)</td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Edit", new { id = item.DriverId })" class="btn btn-icon btn-edit" title="Edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.DriverId })" class="btn btn-icon btn-details" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.DriverId })" class="btn btn-icon btn-delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <!-- Same pagination as Client view -->
+        </div>
+    </div>
+</div>

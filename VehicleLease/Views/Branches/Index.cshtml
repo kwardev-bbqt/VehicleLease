@@ -1,0 +1,105 @@
+﻿@model IEnumerable<VehicleLease.Models.Domain.Branch>
+
+@{
+    ViewBag.Title = "Branch Network";
+}
+@{
+    var regions = Model.Select(b => b.Region).Distinct();
+}
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-building"></i> Branch Network</h1>
+            <a href="@Url.Action("Create")" class="btn btn-premium">
+                <i class="fas fa-plus-circle"></i> New Branch
+            </a>
+        </div>
+        <div class="search-filter">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search branches...">
+            </div>
+            <select class="form-select">
+                <option>Filter by Region</option>
+                @foreach (var region in regions)
+                {
+                    <option>@region</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="card-view">
+        <div class="card-header">
+            <h3><i class="fas fa-map-marker-alt"></i> Our Locations</h3>
+            <span class="badge bg-primary">@Model.Count() Branches</span>
+        </div>
+
+        <div class="table-card">
+            <table class="elegant-table">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Location)</th>
+                        <th class="actions-header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover-animate" data-region="@item.Region">
+                            <td>@Html.DisplayFor(modelItem => item.Location)</td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Edit", new { id = item.BranchId })" class="btn btn-icon btn-edit" title="Edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.BranchId })" class="btn btn-icon btn-details" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.BranchId })" class="btn btn-icon btn-delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <!-- Same pagination as Client view -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const searchInput = document.querySelector(".search-box input");
+            const regionFilter = document.querySelector(".form-select");
+            const rows = document.querySelectorAll("tbody tr");
+
+            function filterRows() {
+                const searchText = searchInput.value.toLowerCase();
+                const selectedRegion = regionFilter.value;
+
+                rows.forEach(row => {
+                    const locationText = row.querySelector("td").innerText.toLowerCase();
+                    const region = row.getAttribute("data-region");
+
+                    const matchesSearch = locationText.includes(searchText);
+                    const matchesRegion = selectedRegion === "Filter by Region" || region === selectedRegion;
+
+                    if (matchesSearch && matchesRegion) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+            searchInput.addEventListener("input", filterRows);
+            regionFilter.addEventListener("change", filterRows);
+    });
+</script>

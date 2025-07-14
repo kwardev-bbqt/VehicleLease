@@ -1,0 +1,131 @@
+﻿@model IEnumerable<VehicleLease.Models.Domain.Vehicle>
+
+@{
+    ViewBag.Title = "Vehicle Fleet";
+}
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-car"></i> Vehicle Fleet</h1>
+            <a href="@Url.Action("Create")" class="btn btn-premium">
+                <i class="fas fa-plus-circle"></i> New Vehicle
+            </a>
+        </div>
+        <div class="search-filter">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="vehicleSearch" placeholder="Search vehicles...">
+            </div>
+            <select id="statusFilter" class="form-select">
+                <option value="">Filter by Status</option>
+                <option value="Available">Available</option>
+                <option value="Leased">Leased</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card-view">
+        <div class="card-header">
+            <h3><i class="fas fa-list"></i> Inventory List</h3>
+            <span class="badge bg-primary">@Model.Count() Vehicles</span>
+        </div>
+
+        <div class="table-card">
+            <table class="elegant-table">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Make)</th>
+                        <th>@Html.DisplayNameFor(model => model.Model)</th>
+                        <th>Status</th>
+                        <th class="actions-header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var status = item.Driver == null ? "Available" : "Leased";
+
+                        <tr class="hover-animate" data-status="@status">
+                            <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                            <td>
+                                @if (item.Driver == null)
+                                {
+                                    <span class="badge bg-success">Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Leased</span>
+                                }
+                            </td>
+                            <td class="actions-cell">
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Edit", new { id = item.VehicleId })" class="btn btn-icon btn-edit" title="Edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.VehicleId })" class="btn btn-icon btn-details" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.VehicleId })" class="btn btn-icon btn-delete" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer">
+            <div class="pagination">
+                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                <span class="page-active">1</span>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="view-options">
+                <span>View:</span>
+                <select class="form-select-sm">
+                    <option>10</option>
+                    <option>25</option>
+                    <option>50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("vehicleSearch");
+        const statusFilter = document.getElementById("statusFilter");
+        const rows = document.querySelectorAll("tbody tr");
+
+        function filterRows() {
+            const searchText = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+            console.log(selectedStatus)
+            console.log('------------')
+
+            rows.forEach(row => {
+                const rowText = row.innerText.toLowerCase();
+                const rowStatus = row.getAttribute("data-status");
+                console.log(rowStatus)
+
+                const matchesSearch = rowText.includes(searchText);
+                const matchesStatus = selectedStatus === "" || rowStatus === selectedStatus;
+                console.log(matchesStatus)
+                console.log(matchesSearch)
+                console.log((matchesSearch && matchesStatus) ? "flex" : "none")
+
+                row.style.display = (matchesSearch && matchesStatus) ? "" : "none";
+            });
+        }
+
+        searchInput.addEventListener("input", filterRows);
+        statusFilter.addEventListener("change", filterRows);
+    });
+</script>
